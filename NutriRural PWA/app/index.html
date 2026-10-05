@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#155e75">
+  <meta name="description" content="Plataforma offline-first para tamizaje y monitoreo nutricional infantil en zonas rurales.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="styles.css">
+  <title>NutriRural - Monitoreo nutricional infantil</title>
+</head>
+<body>
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="brand brand-large"><span class="brand-mark">NR</span><div><strong>NutriRural</strong><small>Salud digital offline-first</small></div></div>
+      <h1>Detección temprana y monitoreo nutricional</h1>
+      <p class="muted">Prototipo académico para agentes comunitarios y personal de salud de Paruro, Cusco.</p>
+      <form id="loginForm" class="stack">
+        <label>Usuario<input id="loginUser" value="agente" autocomplete="username" required></label>
+        <label>Contraseña<input id="loginPass" type="password" value="agente2026" autocomplete="current-password" required></label>
+        <button class="btn primary" type="submit">Ingresar</button>
+      </form>
+      <details class="demo-box"><summary>Credenciales de demostración</summary><p><b>Agente:</b> agente / agente2026<br><b>Salud:</b> salud / salud2026<br><b>Administrador:</b> admin / admin2026</p></details>
+      <p class="warning-note">Uso académico. El resultado es un tamizaje y no sustituye la evaluación clínica.</p>
+    </div>
+  </section>
+
+  <div id="appShell" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">NR</span><div><strong>NutriRural</strong><small id="roleLabel">Modo agente</small></div></div>
+      <nav id="navMenu">
+        <button data-view="dashboard" class="nav-item active">⌂ <span>Panel</span></button>
+        <button data-view="children" class="nav-item">♙ <span>Niños</span></button>
+        <button data-view="assessment" class="nav-item">＋ <span>Nuevo control</span></button>
+        <button data-view="alerts" class="nav-item">⚠ <span>Alertas</span><em id="alertBadge">0</em></button>
+        <button data-view="evaluation" class="nav-item">✓ <span>Evaluación SUS/NPS</span></button>
+        <button data-view="sync" class="nav-item">↻ <span>Sincronización</span><em id="syncBadge">0</em></button>
+        <button data-view="settings" class="nav-item">⚙ <span>Configuración</span></button>
+      </nav>
+      <div class="sidebar-footer"><button id="logoutBtn" class="nav-item">⇥ <span>Cerrar sesión</span></button></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="menuBtn" class="icon-btn mobile-only" aria-label="Abrir menú">☰</button>
+        <div><h2 id="viewTitle">Panel de monitoreo</h2><p id="viewSubtitle">Resumen operativo de la jornada</p></div>
+        <div class="top-actions"><span id="networkChip" class="chip offline">● Sin conexión</span><button id="quickSyncBtn" class="btn secondary">Sincronizar</button><div class="avatar" id="avatar">AC</div></div>
+      </header>
+      <div id="content" class="content"></div>
+    </main>
+  </div>
+
+  <dialog id="childDialog" class="modal"><form method="dialog" id="childForm"><div class="modal-head"><div><h3 id="childDialogTitle">Registrar niño</h3><p>Datos mínimos para seguimiento longitudinal.</p></div><button type="button" class="icon-btn" data-close="childDialog" aria-label="Cerrar">×</button></div><div class="form-grid">
+    <label>DNI o código<input name="code" required inputmode="numeric" pattern="[0-9]{8}" minlength="8" maxlength="8" placeholder="8 dígitos" title="El DNI debe tener exactamente 8 dígitos numéricos."></label><label>Nombres<input name="firstName" required maxlength="60"></label><label>Apellidos<input name="lastName" required maxlength="60"></label>
+    <label>Sexo<select name="sex" required><option value="M">Masculino</option><option value="F">Femenino</option></select></label><label>Fecha de nacimiento<input name="dob" type="date" required title="La plataforma cubre de 0 a 60 meses de edad."></label><label>Comunidad<input name="community" required value="Paruro"></label>
+    <label>Madre, padre o cuidador<input name="caregiver" maxlength="100"></label><label>Teléfono<input name="phone" inputmode="numeric" pattern="[0-9]{9}" minlength="9" maxlength="9" placeholder="9 dígitos" title="El teléfono debe tener exactamente 9 dígitos numéricos."></label><label>Establecimiento de referencia<input name="facility" value="Centro de Salud Paruro" readonly tabindex="-1" aria-readonly="true" class="readonly-field"></label>
+  </div><label>Observaciones<textarea name="notes" rows="2"></textarea></label><div class="modal-actions"><button type="button" class="btn secondary" data-close="childDialog">Cancelar</button><button id="saveChildBtn" value="default" class="btn primary">Guardar niño</button></div></form></dialog>
+
+  <dialog id="assessmentDialog" class="modal modal-wide"><form method="dialog" id="assessmentForm"><div class="modal-head"><div><h3 id="assessmentDialogTitle">Nuevo control antropométrico</h3><p id="assessmentChildLabel">Seleccione un niño.</p></div><button type="button" class="icon-btn" data-close="assessmentDialog" aria-label="Cerrar">×</button></div>
+    <input type="hidden" name="childId"><div class="assessment-layout"><div class="form-grid">
+      <label>Fecha del control<input name="date" type="date" required></label><label>Peso (kg)<input name="weightKg" type="number" step="0.01" min="1" max="40" required></label><label>Longitud/talla (cm)<input name="heightCm" type="number" step="0.1" min="40" max="125" required></label>
+      <label>Posición de medición<select name="position" required><option value="" disabled selected>Seleccione una opción</option><option value="length">Acostado (longitud)</option><option value="height">De pie (talla)</option></select></label><label>MUAC (mm)<input name="muacMm" type="number" step="1" min="80" max="250"></label><label>Edema bilateral<select name="edema"><option value="no">No</option><option value="yes">Sí</option></select></label>
+      <label>Próximo control<input name="nextControlDate" type="date" title="Debe ser posterior a la fecha del control."></label><label class="span-2">Observaciones<textarea name="notes" rows="3"></textarea></label>
+    </div><aside id="screeningPreview" class="screening-preview"><h4>Vista previa del tamizaje</h4><p class="muted">Complete peso y talla para calcular indicadores.</p></aside></div>
+    <div class="modal-actions"><button type="button" class="btn secondary" data-close="assessmentDialog">Cancelar</button><button id="saveAssessmentBtn" value="default" class="btn primary">Guardar control y generar alerta</button></div></form></dialog>
+
+  <dialog id="detailDialog" class="modal modal-wide"><div id="detailContent"></div><div class="modal-actions"><button type="button" class="btn secondary" data-close="detailDialog">Cerrar</button></div></dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

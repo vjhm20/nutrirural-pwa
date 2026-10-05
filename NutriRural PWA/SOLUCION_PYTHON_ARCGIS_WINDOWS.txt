@@ -1,0 +1,26 @@
+SOLUCION PARA EL ERROR: C:\Python27\ArcGIS10.8\python.exe: No module named venv
+
+CAUSA
+El equipo esta ejecutando Python 2.7 incluido con ArcGIS 10.8. Python 2.7 no contiene el modulo venv y no puede ejecutar NutriRural, que requiere Python 3.10 o superior.
+
+IMPORTANTE
+No desinstale Python 2.7 de ArcGIS, porque ArcGIS 10.8 puede necesitarlo. Python 2.7 y Python 3 pueden instalarse en paralelo.
+
+PASOS
+1. Descargue el instalador de Python 3.11 o 3.12 para Windows de 64 bits desde python.org.
+2. En la primera pantalla marque:
+   - Add python.exe to PATH
+   - Install launcher for all users / Python Launcher, si aparece.
+3. Termine la instalacion y cierre todas las ventanas de CMD.
+4. Abra una nueva ventana de CMD y compruebe:
+      py -3 --version
+   Debe mostrarse Python 3.x.
+5. Ejecute nuevamente start_windows.bat.
+
+El archivo start_windows.bat corregido busca Python 3, ignora Python 2.7 de ArcGIS, crea el entorno virtual y usa directamente .venv\Scripts\python.exe para evitar conflictos de PATH.
+
+Si el instalador no agrega Python al PATH, puede indicar manualmente la ruta antes de iniciar:
+   set NUTRIRURAL_PYTHON=C:\Users\SU_USUARIO\AppData\Local\Programs\Python\Python312\python.exe
+   start_windows.bat
+
+Tambien puede editar start_windows.bat y sustituir la ruta anterior por la ruta real de Python 3 instalada en su equipo.

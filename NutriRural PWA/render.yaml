@@ -1,0 +1,28 @@
+# Despliegue del servicio de consolidacion de NutriRural.
+# La aplicacion web (carpeta app/) se publica aparte en Netlify; este servicio
+# solo recibe y consolida los registros que envian los dispositivos.
+#
+# El plan gratuito no admite disco persistente: la base SQLite vive en el
+# sistema de archivos temporal del contenedor y se reinicia con cada nuevo
+# despliegue. Es suficiente para un piloto academico y para la demostracion.
+# Para conservar los datos entre despliegues hay que pasar a un plan con disco
+# y agregar el bloque comentado al final de este archivo.
+services:
+  - type: web
+    name: nutrirural-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+
+    # Para un plan con disco persistente, descomentar y agregar tambien
+    # la variable NUTRIRURAL_DATA_DIR con el valor /var/data:
+    #
+    # disk:
+    #   name: nutrirural-datos
+    #   mountPath: /var/data
+    #   sizeGB: 1

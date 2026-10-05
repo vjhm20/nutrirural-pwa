@@ -1,0 +1,3 @@
+# Prototipo academico de investigacion. No debe indexarse.
+User-agent: *
+Disallow: /
